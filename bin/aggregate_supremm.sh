@@ -28,4 +28,9 @@ fi
     
     php ${XDMOD_LIB_PATH}/aggregate_supremm.php $FLAGS
 
+    php ${XDMOD_SHARE_PATH}/tools/etl/etl_overseer.php -c ${XDMOD_SHARE_PATH}/../etc/etl/etl.json -p acls-xdmod-management
+    
+    ${XDMOD_SHARE_PATH}/../bin/acl-config
+
+    php ${XDMOD_SHARE_PATH}/tools/etl/etl_overseer.php -c ${XDMOD_SHARE_PATH}/../etc/etl/etl.json -p acls-import
 ) 9>${LOCKFILE}
