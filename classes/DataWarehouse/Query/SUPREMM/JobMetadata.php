@@ -309,7 +309,7 @@ class JobMetadata
         $params = array(new \DataWarehouse\Query\Model\Parameter("_id", "=", $jobid));
 
         $query = new \DataWarehouse\Query\SUPREMM\JobDataset($params, "internal");
-        $query->setMultipleRoleParameters($user->getAllRoles(), $user);
+        $query->setMultipleRoleParameters($user->getAcls(), $user);
         $stmt = $query->getRawStatement();
 
         $job = $stmt->fetchAll(\PDO::FETCH_ASSOC);
