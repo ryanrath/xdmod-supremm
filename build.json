@@ -51,6 +51,7 @@
             "configuration/portal_settings.d/supremm.ini": "portal_settings.d/supremm.ini",
             "configuration/datawarehouse.d": "",
             "configuration/rawstatistics.d/10_supremm.json": "rawstatistics.d/10_supremm.json",
+            "configuration/resource_types.d": "",
             "configuration/rest.d/supremm_dataflow.json": "rest.d/supremm_dataflow.json",
             "configuration/roles.d": "",
             "configuration/assets.d": "",

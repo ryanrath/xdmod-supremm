@@ -1,0 +1,28 @@
+{
+    "resource_types": {
+        "HPC": {
+            "description": "High-performance computing",
+            "realms": [
+                "SUPREMM"
+            ]
+        },
+        "HTC": {
+            "description": "High-throughput computing",
+            "realms": [
+                "SUPREMM"
+            ]
+        },
+        "DIC": {
+            "description": "Data-intensive computing",
+            "realms": [
+                "SUPREMM"
+            ]
+        },
+        "Vis": {
+            "description": "Visualization system",
+            "realms": [
+                "SUPREMM"
+            ]
+        }
+    }
+}

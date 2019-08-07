@@ -55,6 +55,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/xdmod/rawstatistics.d/10_supremm.json
 %config(noreplace) %{_sysconfdir}/xdmod/rawstatisticsconfig.json
 %config(noreplace) %{_sysconfdir}/xdmod/supremmconfig.json
+%config(noreplace) %{_sysconfdir}/xdmod/resource_types.d/*.json
 
 %changelog
 * Tue Apr 23 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.1.0-1.0
