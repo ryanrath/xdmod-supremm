@@ -28,7 +28,7 @@ jobs:
       - run:
           name: Add Upstream Git repo to facilitate QA tests
           command: |
-            pwd
+            cd $MODULE_DIR
             git remote add upstream https://github.com/ubccr/xdmod-supremm.git
       # We need to update our acct before we can enable docker layer caching.
       #- setup_remote_docker:
@@ -42,7 +42,9 @@ jobs:
             - v1-dependencies-
       - run:
           name: Install SUPREMM Dependencies
-          command: composer install --no-progress
+          command: |
+            pwd
+            composer install --no-progress
       - save_cache:
           name: Cache SUPREMM Dependencies
           key: v1-dependencies-{{ checksum "composer.json" }}
