@@ -18,15 +18,18 @@ jobs:
       XDMOD_INSTALL_DIR: /xdmod
       XDMOD_TEST_MODE: << parameters.install-type >>
       XDMOD_SRC_DIR: /root/src/github.com/ubccr/xdmod
+      MODULE_DIR: /root/src/github.coim/ubccr/xdmod/open_xdmod/modules/supremm
     steps:
       - run:
           name: Checkout XDMoD
           command: git clone --depth=1 --branch=xdmod9.5 https://github.com/ubccr/xdmod.git $XDMOD_SRC_DIR
       - checkout:
-          path: $XDMOD_SRC_DIR/open_xdmod/modules/supremm
+          path: $MODULE_DIR
       - run:
           name: Add Upstream Git repo to facilitate QA tests
-          command: git remote add upstream https://github.com/ubccr/xdmod-supremm.git
+          command: |
+            cd $MODULE_DIR
+            git remote add upstream https://github.com/ubccr/xdmod-supremm.git
       # We need to update our acct before we can enable docker layer caching.
       #- setup_remote_docker:
       #    docker_layer_caching: true
