@@ -19,13 +19,11 @@ jobs:
       XDMOD_TEST_MODE: << parameters.install-type >>
       XDMOD_SRC_DIR: /root/src/github.com/ubccr/xdmod
     steps:
-      - checkout
       - run:
           name: Checkout XDMoD
           command: git clone --depth=1 --branch=xdmod9.5 https://github.com/ubccr/xdmod.git $XDMOD_SRC_DIR
-      - run:
-          name: Link Module into XDMoD
-          command: ln -s $CIRCLE_WORKING_DIRECTORY $XDMOD_SRC_DIR/open_xdmod/modules/supremm
+      - checkout:
+          path: $XDMOD_SRC_DIR/open_xdmod/modules/supremm
       - run:
           name: Add Upstream Git repo to facilitate QA tests
           command: git remote add upstream https://github.com/ubccr/xdmod-supremm.git
@@ -63,11 +61,15 @@ jobs:
       - run:
           name: Build RPMS
           command: |
-            cd $XDMOD_SRC_DIR
+            pushd $XDMOD_SRC_DIR
             ~/bin/buildrpm xdmod supremm
+            popd
+            echo `pwd`
       - run:
           name: Install / Upgrade XDMoD from RPM
-          command: ./tests/integration_tests/scripts/bootstrap.sh
+          command: |
+              echo `pwd`
+              ./tests/integration_tests/scripts/bootstrap.sh
       - run:
           name: Validate the newly installed / Upgraded XDMoD
           command: ./tests/integration_tests/scripts/validate.sh
