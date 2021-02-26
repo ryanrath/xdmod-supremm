@@ -17,14 +17,15 @@ jobs:
       XDMOD_IS_CORE: 'yes'
       XDMOD_INSTALL_DIR: /xdmod
       XDMOD_TEST_MODE: << parameters.install-type >>
+      XDMOD_SRC_DIR: /root/src/github.com/ubccr/xdmod
     steps:
       - checkout
       - run:
           name: Checkout XDMoD
-          command: git clone --depth=1 --branch=xdmod9.5 https://github.com/ubccr/xdmod.git ../xdmod
+          command: git clone --depth=1 --branch=xdmod9.5 https://github.com/ubccr/xdmod.git $XDMOD_SRC_DIR
       - run:
           name: Link Module into XDMoD
-          command: ln -s $CIRCLE_WORKING_DIRECTORY ../xdmod/open_xdmod/modules/supremm
+          command: ln -s $CIRCLE_WORKING_DIRECTORY $XDMOD_SRC_DIR/open_xdmod/modules/supremm
       - run:
           name: Add Upstream Git repo to facilitate QA tests
           command: git remote add upstream https://github.com/ubccr/xdmod-supremm.git
@@ -48,7 +49,7 @@ jobs:
             - ./vendor
       - run:
           name: Install XDMoD Dependencies
-          command: composer install -d ../xdmod --no-progress
+          command: composer install -d $XDMOD_SRC_DIR --no-progress
       - run:
           name: Create Test Artifact Directories
           command: |
@@ -62,9 +63,8 @@ jobs:
       - run:
           name: Build RPMS
           command: |
-            cd ../xdmod
+            cd $XDMOD_SRC_DIR
             ~/bin/buildrpm xdmod supremm
-            cd $CIRCLE_WORKING_DIRECTORY
       - run:
           name: Install / Upgrade XDMoD from RPM
           command: ./tests/integration_tests/scripts/bootstrap.sh
@@ -73,22 +73,28 @@ jobs:
           command: ./tests/integration_tests/scripts/validate.sh
       - run:
           name: Make sure that the Composer Test Depedencies are installed
-          command: composer install -d ../xdmod --no-progress
+          command: composer install -d $XDMOD_SRC_DIR --no-progress
       - run:
           name: Setup & Run QA Tests
-          command: ../xdmod/tests/ci/scripts/qa-test-setup.sh
+          command: $XDMOD_SRC_DIR/tests/ci/scripts/qa-test-setup.sh
       - run:
           name: Make sure that the Composer Test Depedencies are installed
-          command: composer install -d ../xdmod --no-progress
+          command: composer install -d $XDMOD_SRC_DIR --no-progress
       - run:
           name: Updating XDMOD_INSTALL_DIR env variable
           command: echo "export XDMOD_INSTALL_DIR=/usr/share/xdmod" >> $BASH_ENV
       - run:
           name: Run Post Install Tests
           command: ./tests/ci/scripts/post-install-test.sh
-      - run: ./tests/integration_tests/runtests.sh --junit-output-dir ~/phpunit
-      - run: ../xdmod/tests/ui/runtests.sh --headless --log-junit ~/phpunit
-      - run: ./tests/regression_tests/runtests.sh --junit-output-dir ~/phpunit
+      - run:
+          name: Run Integration Tests
+          commmand: ./tests/integration_tests/runtests.sh --junit-output-dir ~/phpunit
+      - run:
+          name: Run UI Tests
+          command: $XDMOD_SRC_DIR/tests/ui/runtests.sh --headless --log-junit ~/phpunit
+      - run:
+          name: Run Regression Tests
+          command: ./tests/regression_tests/runtests.sh --junit-output-dir ~/phpunit
       - store_artifacts:
           path: /tmp/screenshots
       - store_artifacts:
