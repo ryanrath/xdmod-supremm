@@ -17,39 +17,32 @@ jobs:
       XDMOD_IS_CORE: 'yes'
       XDMOD_INSTALL_DIR: /xdmod
       XDMOD_TEST_MODE: << parameters.install-type >>
-      XDMOD_SRC_DIR: ~/project/src/github.com/ubccr/xdmod
+      XDMOD_SRC_DIR: ~/src/github.com/ubccr/xdmod
       MODULE_DIR: ./src/github.com/ubccr/xdmod/open_xdmod/modules/supremm
     steps:
+      - checkout
       - run:
           name: Checkout XDMoD
           command: git clone --depth=1 --branch=xdmod9.5 https://github.com/ubccr/xdmod.git $XDMOD_SRC_DIR
-      - checkout:
-          path: $MODULE_DIR
+      - run:
+          name: Link the SUPREMM module into the XDMoD Source Directory
+          command: |
+              pwd
+              ln -s . $MODULE_DIR
       - run:
           name: Add Upstream Git repo to facilitate QA tests
           command: |
-            cd $MODULE_DIR
+            pwd
             git remote add upstream https://github.com/ubccr/xdmod-supremm.git
       # We need to update our acct before we can enable docker layer caching.
       #- setup_remote_docker:
       #    docker_layer_caching: true
       # Download and cache dependencies
-      - restore_cache:
-          keys:
-            # "composer.lock" can be used if it is committed to the repo
-            - v1-dependencies-{{ checksum "composer.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
       - run:
           name: Install SUPREMM Dependencies
           command: |
             pwd
             composer install --no-progress
-      - save_cache:
-          name: Cache SUPREMM Dependencies
-          key: v1-dependencies-{{ checksum "composer.json" }}
-          paths:
-            - ./vendor
       - run:
           name: Install XDMoD Dependencies
           command: composer install -d $XDMOD_SRC_DIR --no-progress
