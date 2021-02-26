@@ -18,7 +18,7 @@ jobs:
       XDMOD_INSTALL_DIR: /xdmod
       XDMOD_TEST_MODE: << parameters.install-type >>
       XDMOD_SRC_DIR: /root/src/github.com/ubccr/xdmod
-      MODULE_DIR: /root/src/github.coim/ubccr/xdmod/open_xdmod/modules/supremm
+      MODULE_DIR: /root/src/github.com/ubccr/xdmod/open_xdmod/modules/supremm
     steps:
       - run:
           name: Checkout XDMoD
