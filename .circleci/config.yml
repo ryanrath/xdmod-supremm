@@ -19,13 +19,13 @@ jobs:
       XDMOD_TEST_MODE: << parameters.install-type >>
     steps:
       - checkout
-      - run: 
-          name: Checkout XDMoD 
+      - run:
+          name: Checkout XDMoD
           command: git clone --depth=1 --branch=xdmod9.5 https://github.com/ubccr/xdmod.git ../xdmod
-      - run: 
-          name: Link Module into XDMoD 
+      - run:
+          name: Link Module into XDMoD
           command: ln -s $CIRCLE_WORKING_DIRECTORY ../xdmod/open_xdmod/modules/supremm
-      - run: 
+      - run:
           name: Add Upstream Git repo to facilitate QA tests
           command: git remote add upstream https://github.com/ubccr/xdmod-supremm.git
       # We need to update our acct before we can enable docker layer caching.
@@ -38,7 +38,7 @@ jobs:
             - v1-dependencies-{{ checksum "composer.json" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
-      - run: 
+      - run:
           name: Install SUPREMM Dependencies
           command: composer install --no-progress
       - save_cache:
@@ -46,7 +46,7 @@ jobs:
           key: v1-dependencies-{{ checksum "composer.json" }}
           paths:
             - ./vendor
-      - run: 
+      - run:
           name: Install XDMoD Dependencies
           command: composer install -d ../xdmod --no-progress
       - run:
@@ -59,7 +59,7 @@ jobs:
           command: |
             echo "export XDMOD_SOURCE_DIR=${CIRCLE_WORKING_DIRECTORY}" >> $BASH_ENV
             echo "export SHIPPABLE_BUILD_DIR=${CIRCLE_WORKING_DIRECTORY}" >> $BASH_ENV
-      - run: 
+      - run:
           name: Build RPMS
           command: |
             cd ../xdmod
@@ -80,10 +80,10 @@ jobs:
       - run:
           name: Make sure that the Composer Test Depedencies are installed
           command: composer install -d ../xdmod --no-progress
-      - run: 
+      - run:
           name: Updating XDMOD_INSTALL_DIR env variable
           command: echo "export XDMOD_INSTALL_DIR=/usr/share/xdmod" >> $BASH_ENV
-      - run: 
+      - run:
           name: Run Post Install Tests
           command: ./tests/ci/scripts/post-install-test.sh
       - run: ./tests/integration_tests/runtests.sh --junit-output-dir ~/phpunit
