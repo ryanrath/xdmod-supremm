@@ -132,8 +132,8 @@ WHERE
 
         $supremmDbInterface = new \DataWarehouse\Query\SUPREMM\SupremmDbInterface();
         $resconf = $supremmDbInterface->getResourceConfig($job['resource_id']);
-        $collection = $resconf['handle']->selectCollection($resconf['collection']);
-        $query = array( "_id" => new \MongoRegex("/^${job['local_job_id_raw']}-.*${job['end_time_ts']}/") );
+        $collection = $resconf['handle']->$resconf['collection'];
+        $query = array( "_id" => new \MongoDB\BSON\Regex("/^${job['local_job_id_raw']}-.*${job['end_time_ts']}/") );
         $doc = $collection->findOne($query);
         if ( $doc === null) {
             print "No document found for this job in mongo\n";
@@ -141,8 +141,9 @@ WHERE
             print "Summary in mongo: " . implode(", ", array_keys($doc)) . "\n";
         }
 
-        $collection = $resconf['handle']->selectCollection('timeseries-'.$resconf['collection']);
-        $query = array( "_id" => new \MongoRegex("/^${job['local_job_id_raw']}-.*${job['end_time_ts']}/") );
+        $timeseriesCollection = 'timeseries-'.$resconf['collection'];
+        $collection = $resconf['handle']->$timeseriesCollection;
+        $query = array( "_id" => new \MongoDB\BSON\Regex("/^${job['local_job_id_raw']}-.*${job['end_time_ts']}/") );
         $doc = $collection->findOne($query);
         if ( $doc === null) {
             print "No timeseries document found for this job in mongo\n";

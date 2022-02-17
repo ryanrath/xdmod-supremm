@@ -322,7 +322,8 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
     private function getsummaryschema($resource_id, $summary_version)
     {
 
-        $resconf =& $this->supremmDbInterface->getResourceConfig($resource_id);
+        $resourceConfig = $this->supremmDbInterface->getResourceConfig($resource_id);
+        $resconf =& $resourceConfig;
 
         if ($resconf === null) {
             return null;
@@ -333,15 +334,16 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
 
     private function gettimeseries($resource_id, $jobid, $end_time_ts, $filter = null)
     {
- 
-        $resconf =& $this->supremmDbInterface->getResourceConfig($resource_id);
+
+        $resourceConfig = $this->supremmDbInterface->getResourceConfig($resource_id);
+        $resconf =& $resourceConfig;
 
         if ($resconf === null) {
             return null;
         }
-
-        $collection = $resconf['handle']->selectCollection('timeseries-'.$resconf['collection']);
-        $query = array( "_id" => new \MongoRegex("/^$jobid-.*$end_time_ts/") );
+        $timeseriesCollection = 'timeseries-'.$resconf['collection'];
+        $collection = $resconf['handle']->$timeseriesCollection;
+        $query = array( "_id" => new \MongoDB\BSON\Regex("^$jobid-.*$end_time_ts") );
 
         if ($filter === null) {
             $doc = $collection->findOne($query);
@@ -377,15 +379,16 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
     private function getjobdata($resource_id, $jobid, $end_time_ts)
     {
 
-        $resconf =& $this->supremmDbInterface->getResourceConfig($resource_id);
+        $resourceConfig = $this->supremmDbInterface->getResourceConfig($resource_id);
+        $resconf =& $resourceConfig;
 
         if ($resconf === null) {
             return null;
         }
 
-        $collection = $resconf['handle']->selectCollection($resconf['collection']);
+        $collection = $resconf['handle']->$resconf['collection'];
 
-        $query = array( "_id" => new \MongoRegex("/^$jobid-.*$end_time_ts/") );
+        $query = array( "_id" => new \MongoDB\BSON\Regex("^$jobid-.*$end_time_ts") );
 
         $res = $collection->findOne($query);
 

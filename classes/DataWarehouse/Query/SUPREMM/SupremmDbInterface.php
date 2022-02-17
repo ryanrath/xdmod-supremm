@@ -47,15 +47,16 @@ class SupremmDbInterface {
      */
     public function updateEtlVersion($resource_id, $new_etl_version) {
 
-        $resconf =& $this->getResourceConfig($resource_id);
+        $resourceConfig = $this->getResourceConfig($resource_id);
+        $resconf =& $resourceConfig;
 
         if( $resconf === null) {
             return null;
         }
 
-        $collection = $resconf['handle']->selectCollection($resconf['collection']);
+        $collection = $resconf['handle']->$resconf['collection'];
 
-        $result = $collection->update(
+        $result = $collection->updateOne(
             array('processed.' . $this->getEtlUid() . '.version' => $this->etl_version),
             array('$set' => array('processed.' . $this->getEtlUid() . '.version' => $new_etl_version)),
             array('multiple' => true, 'socketTimeoutMS' => -1, 'wTimeoutMS' => -1)
@@ -100,9 +101,9 @@ class SupremmDbInterface {
             $mongouri = "mongodb://" . $dbSettings['host'] . ":" . $dbSettings['port'];
         }
 
-        $connection = new \MongoClient($mongouri);
+        $client = new \MongoDB\Client($mongouri);
 
-        $resconf['handle'] =& $connection->selectDB($dbSettings['db']);
+        $resconf['handle'] =& $client->$dbSettings['db'];
 
         return $resconf;
     }
@@ -121,7 +122,8 @@ class SupremmDbInterface {
 
     public function getsummaryschema($resource_id, $summary_version) {
 
-        $resconf =& $this->getResourceConfig($resource_id);
+        $resourceConfig = $this->getResourceConfig($resource_id);
+        $resconf =& $resourceConfig;
 
         if( $resconf === null) {
             return null;
@@ -132,7 +134,8 @@ class SupremmDbInterface {
 
     public function getdbstats($resource_id) {
 
-        $resconf =& $this->getResourceConfig($resource_id);
+        $resourceConfig = $this->getResourceConfig($resource_id);
+        $resconf =& $resourceConfig;
 
         if( $resconf === null) {
             return null;
@@ -146,7 +149,7 @@ class SupremmDbInterface {
         $tmp["storageSize"] = $this->formatDataSize($stats["storageSize"]);
         $tmp["size"] = $this->formatDataSize($stats["size"]);
 
-        $collection = $resconf['handle']->selectCollection( $resconf['collection'] );
+        $collection = $resconf['handle']->resconf['collection'];
 
         $processed = $collection->count( array( "processed." . $this->getEtlUid() . ".version" => $this->etl_version ) );
         $tmp["processed"] = $processed;

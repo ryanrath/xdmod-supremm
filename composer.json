@@ -1,6 +1,7 @@
 {
     "require": {
-        "sporritt/jsplumb-jquery-min-file": "^1.6.3"
+        "sporritt/jsplumb-jquery-min-file": "^1.6.3",
+        "mongodb/mongodb": "^1.1"
     },
     "repositories": [
         {
