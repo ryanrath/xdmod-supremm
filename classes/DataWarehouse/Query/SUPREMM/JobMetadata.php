@@ -127,7 +127,13 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
 
         $schema = $this->getsummaryschema($job['resource_id'], $jversion);
         if ($schema !== null) {
-            return $this->arrayMergeRecursiveWildcard($jobdata, $schema['definitions']);
+            // NOTE: we use json_decode / json_encode here so that we're guaranteed we're passing arrays to
+            // `arrayMergeRecursiveWildcard`. This change was necessitated when we moved to the newer version of the php
+            // mongo library, mongodb/mongodb ( we previously used the old pecl-mongo library ).
+            return $this->arrayMergeRecursiveWildcard(
+                json_decode(json_encode($jobdata), true),
+                json_decode(json_encode($schema['definitions']), true)
+            );
         } else {
             return $jobdata;
         }
