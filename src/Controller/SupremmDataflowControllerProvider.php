@@ -1,17 +1,17 @@
 <?php
 
-namespace Rest\Controllers;
+namespace CCR\Controllers;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
-use Silex\ControllerCollection;
-use \Symfony\Component\HttpFoundation\JsonResponse;
+use \Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 
 use XDUser;
 use \CCR\DB;
 
+#[Route('/supremm_dataflow')]
 class SupremmDataflowControllerProvider extends BaseControllerProvider
 {
     /**
@@ -45,10 +45,10 @@ class SupremmDataflowControllerProvider extends BaseControllerProvider
      * included in the list even if it has no data present.
      *
      * @param Request $request
-     * @param Application $app
-     * @return JsonResponse
+     * @return Respnse
      */
-    public function getResources(Request $request, Application $app)
+    #[Route('/resources', methods: ['GET'])]
+    public function getResources(Request $request): Response
     {
         $action = __FUNCTION__;
         $payload = array(
@@ -68,17 +68,17 @@ class SupremmDataflowControllerProvider extends BaseControllerProvider
         $payload['data'] = $data;
         $payload['success'] = true;
 
-        return $app->json($payload);
+        return $this->json($payload);
     } // function getResources
 
     /**
      * Retrieve dbstats describing specified supremm resource and db.
      *
      * @param Request $request
-     * @param Application $app
-     * @return JsonResponse
+     * @return Response
      */
-    public function getDbstats(Request $request, Application $app)
+    #[Route('/dbstats', methods: ['GET'])]
+    public function getDbstats(Request $request)
     {
         $resourceid = $this->getIntParam($request, 'resource_id');
         $dbid = $this->getStringParam($request, 'db_id');
@@ -100,9 +100,14 @@ class SupremmDataflowControllerProvider extends BaseControllerProvider
             throw new NotFoundHttpException("There was no result found for the given database ($dbid) and resource ($resourceid)");
         }
 
-        return $app->json($payload);
+        return $this->json($payload);
     } // function getDbstats
 
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    #[Route('/quality', methods: ['GET'])]
     public function getQuality(Request $request, Application $app)
     {
         $this->authorize($request, array('mgr'));
@@ -133,7 +138,7 @@ class SupremmDataflowControllerProvider extends BaseControllerProvider
             case "gpu":
                 $querystr = $this->gpuqueuequery();
                 $payload['result'] = $this->runquery($querystr, $params);
-                return $app->json($payload);
+                return $this->json($payload);
                 break;
 
             case "hardware":
@@ -143,7 +148,7 @@ class SupremmDataflowControllerProvider extends BaseControllerProvider
                     $querystr = $this->getjobsquery('supremm', 'sf.cpibucket_id != 1', $reslist);
                     $payload['result'] = $this->runquery($querystr, $params);
                 }
-                return $app->json($payload);
+                return $this->json($payload);
                 break;
 
             case "cpu":
@@ -153,13 +158,13 @@ class SupremmDataflowControllerProvider extends BaseControllerProvider
                     $querystr = $this->getjobsquery('supremm', true, $reslist);
                     $payload['result'] = $this->runquery($querystr, $params);
                 }
-                return $app->json($payload);
+                return $this->json($payload);
                 break;
 
             case "script":
                 $querystr = $this->getjobscriptquery();
                 $payload['result'] = $this->runquery($querystr, $params);
-                return $app->json($payload);
+                return $this->json($payload);
                 break;
 
             case "realms":
@@ -169,7 +174,7 @@ class SupremmDataflowControllerProvider extends BaseControllerProvider
                     $querystr = $this->getjobsquery('job', false, $reslist);
                     $payload['result'] = $this->runquery($querystr, $params);
                 }
-                return $app->json($payload);
+                return $this->json($payload);
                 break;
 
             default:

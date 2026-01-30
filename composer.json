@@ -10,5 +10,12 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^9.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "DataWarehouse\\": "classes/DataWarehouse/",
+            "OpenXdmod\\": "classes/OpenXdmod/",
+            "CCR\\": "src/"
+        }
     }
 }

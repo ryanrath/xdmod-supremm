@@ -1,6 +1,0 @@
-{
-  "supremm_dataflow": {
-    "prefix": "supremm_dataflow",
-    "controller": "Rest\\Controllers\\SupremmDataflowControllerProvider"
-  }
-}

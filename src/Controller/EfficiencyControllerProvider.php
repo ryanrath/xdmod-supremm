@@ -1,92 +1,43 @@
 <?php
 
-namespace Rest\Controllers;
+namespace CCR\Controllers;
 
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
 
 use Models\Services\Acls;
 
-use Silex\Application;
-use Symfony\Component\HttpFoundation\Request;
-use Silex\ControllerCollection;
-use \Symfony\Component\HttpFoundation\JsonResponse;
+use \Symfony\Component\HttpFoundation\Request;
+use \Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Attribute\Route;
 
 use DataWarehouse\Access\MetricExplorer;
 
 use Exception;
 
+#[Route('/efficiency')]
 class EfficiencyControllerProvider extends BaseControllerProvider
 {
     /**
-     * This function is responsible for the setting up of any routes that this
-     * ControllerProvider is going to be managing. It *must* be overridden by
-     * a child class.
-     *
-     * @param Application $app
-     * @param ControllerCollection $controller
-     * @return null
-     */
-    public function setupRoutes(Application $app, ControllerCollection $controller)
-    {
-        $root = $this->prefix;
-        $base = get_class($this);
-
-        // QUERY ROUTES
-        /**
-        * @OA\Get(
-        *   path="/analytics",
-        *   summary="analytic list",
-        *   @OA\Response(
-        *     response=200,
-        *     description="Returns a json object of analytics to be displayed in the efficiency tab."
-        *   ),
-        *   @OA\Response(
-        *     response="default",
-        *     description="An error occurred while retrieving analytics."
-        *   )
-        * )
-        */
-        $controller->get("$root/analytics", "$base::getAnalytics");
-        /**
-        * @OA\Get(
-        *   path="/groupedData"
-        *   summary="scatter plot data",
-        *   @OA\Response(
-        *     response=200,
-        *     description="Returns a json object of data that populates the scatter plots for the efficiency tab."
-        *   ),
-        *   @OA\Response(
-        *     response="default",
-        *     description="An error occurred while retrieving data."
-        *   )
-        * )
-        */
-        $controller->get("$root/groupedData", "$base::getMultiStatisticData");
-         /**
-        * @OA\Get(
-        *   path="/histogram/{dimension}",
-        *   summary="histogram data",
-        *   @OA\Response(
-        *     response=200,
-        *     description="Returns a json object of histogram chart that displays drill down information from a specific analytic scatter plot."
-        *   ),
-        *   @OA\Response(
-        *     response="default",
-        *     description="An error occurred while retrieving chart data."
-        *   )
-        * )
-        */
-        $controller->get("$root/histogram/{dimension}", "$base::getHistogramData");
-    }
-
-     /**
      * Retrieve efficiency analytics
      *
-     * @param Application $app
-     * @return JsonResponse
+     * @OA\Get(
+     *    path="/analytics",
+     *    summary="analytic list",
+     *    @OA\Response(
+     *      response=200,
+     *      description="Returns a json object of analytics to be displayed in the efficiency tab."
+     *    ),
+     *    @OA\Response(
+     *      response="default",
+     *      description="An error occurred while retrieving analytics."
+     *    )
+     *  )
+     *
+     * @return Response
      */
-    public function getAnalytics(Application $app)
+    #[Route('/analytics', methods: ['GET'])]
+    public function getAnalytics(): Response
     {
         $efficiencyAnalytics = \Configuration\XdmodConfiguration::assocArrayFactory(
             'efficiency_analytics.json',
@@ -96,15 +47,15 @@ class EfficiencyControllerProvider extends BaseControllerProvider
 
         foreach ($efficiencyAnalytics as &$analyticType) {
             foreach ($analyticType['analytics'] as &$analytic) {
-                if (is_array($analytic['documentation'])){
+                if (is_array($analytic['documentation'])) {
                     $analytic['documentation'] = implode(' ', $analytic['documentation']);
                 }
 
-                if (is_array($analytic['statisticDescription'])){
+                if (is_array($analytic['statisticDescription'])) {
                     $analytic['statisticDescription'] = implode(' ', $analytic['statisticDescription']);
                 }
 
-                if (array_key_exists('histogramHelpText', $analytic['histogram'])){
+                if (array_key_exists('histogramHelpText', $analytic['histogram'])) {
                     if (is_array($analytic['histogram']['histogramHelpText'])) {
                         $analytic['histogram']['histogramHelpText'] = implode(' ', $analytic['histogram']['histogramHelpText']);
                     }
@@ -112,7 +63,7 @@ class EfficiencyControllerProvider extends BaseControllerProvider
             }
         }
 
-        return $app->json(array(
+        return $this->json(array(
             'success' => true,
             'total' => count($efficiencyAnalytics),
             'data' => array_values($efficiencyAnalytics)
@@ -122,12 +73,25 @@ class EfficiencyControllerProvider extends BaseControllerProvider
     /**
      * Get histogram chart object
      *
+     * @OA\Get(
+     *    path="/histogram/{dimension}",
+     *    summary="histogram data",
+     *    @OA\Response(
+     *      response=200,
+     *      description="Returns a json object of histogram chart that displays drill down information from a specific analytic scatter plot."
+     *    ),
+     *    @OA\Response(
+     *      response="default",
+     *      description="An error occurred while retrieving chart data."
+     *    )
+     *  )
+     *
      * @param Request $request
-     * @param Application $app
      * @param $dimension
-     * @return JsonResponse
+     * @return Response
      */
-    public function getHistogramData(Request $request, Application $app, $dimension)
+    #[Route('/histogram/{dimension}', methods: ['GET'])]
+    public function getHistogramData(Request $request, $dimension)
     {
         $user = $this->getUserFromRequest($request);
 
@@ -155,7 +119,7 @@ class EfficiencyControllerProvider extends BaseControllerProvider
                 }
             }
 
-            switch($dimension){
+            switch ($dimension) {
                 case 'cpuuser':
                 case 'gpu_usage_bucketid':
                 case 'wall_time_accuracy_bucketid':
@@ -264,7 +228,7 @@ class EfficiencyControllerProvider extends BaseControllerProvider
             }
         }
 
-        return $app->json(array(
+        return $this->json(array(
             'success' => true,
             'message' => "",
             "data" => array($results['data'][0]),
@@ -275,11 +239,24 @@ class EfficiencyControllerProvider extends BaseControllerProvider
     /**
      * Retrieve scatter plot data
      *
+     * @OA\Get(
+     *    path="/groupedData"
+     *    summary="scatter plot data",
+     *    @OA\Response(
+     *      response=200,
+     *      description="Returns a json object of data that populates the scatter plots for the efficiency tab."
+     *    ),
+     *    @OA\Response(
+     *      response="default",
+     *      description="An error occurred while retrieving data."
+     *    )
+     *  )
+     *
      * @param Request $request
-     * @param Application $app
-     * @return JsonResponse
+     * @return Response
      */
-    public function getMultiStatisticData(Request $request, Application $app)
+    #[Route('/groupedData', methods: ['GET'])]
+    public function getMultiStatisticData(Request $request): Response
     {
         $user = $this->authorize($request);
 
@@ -360,7 +337,7 @@ class EfficiencyControllerProvider extends BaseControllerProvider
         $privResults = null;
         $allRoles = $user->getAllRoles();
         $roles = $query->setMultipleRoleParameters($allRoles, $user);
-        if (count($roles) > 0 ) {
+        if (count($roles) > 0) {
             $privDataset = new \DataWarehouse\Data\SimpleDataset($query);
             $privResults = $privDataset->getResults();
         }
@@ -373,7 +350,7 @@ class EfficiencyControllerProvider extends BaseControllerProvider
                 $destination = 'data';
             }
 
-            foreach($config->statistics as $stat) {
+            foreach ($config->statistics as $stat) {
                 $output[$destination][$stat][] = $val[$stat];
                 $output['max'][$stat] = max($output['max'][$stat], $val[$stat]);
             }
@@ -383,7 +360,7 @@ class EfficiencyControllerProvider extends BaseControllerProvider
         }
 
         sleep(0.5);
-        return $app->json(
+        return $this->json(
             array(
                 'results' => [$output],
                 'total' => 1,
@@ -397,7 +374,7 @@ class EfficiencyControllerProvider extends BaseControllerProvider
      *
      * @param Request $request
      * @param $dimension
-     * @return JsonResponse
+     * @return array
      */
     private function getDimensionValues(Request $request, $dimension)
     {
