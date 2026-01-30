@@ -12,34 +12,8 @@ use XDUser;
 use \CCR\DB;
 
 #[Route('/supremm_dataflow')]
-class SupremmDataflowControllerProvider extends BaseControllerProvider
+class SupremmDataflowControllerProvider extends BaseController
 {
-    /**
-     * This function is responsible for the setting up of any routes that this
-     * ControllerProvider is going to be managing. It *must* be overridden by
-     * a child class.
-     *
-     * @param Application $app
-     * @param ControllerCollection $controller
-     * @return null
-     */
-    public function setupRoutes(Application $app, ControllerCollection $controller)
-    {
-        $root = $this->prefix;
-        $base = get_class($this);
-
-        // QUERY ROUTES
-        $controller
-            ->get("$root/resources", "$base::getResources");
-
-        $controller
-            ->get("$root/dbstats", "$base::getDbstats");
-
-        $controller
-            ->get("$root/quality", "$base::getQuality");
-
-    } // function setupRoutes
-
     /**
      * Retrieve list of all configured SUPReMM realm resources. A resource will be
      * included in the list even if it has no data present.

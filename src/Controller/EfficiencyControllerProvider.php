@@ -16,7 +16,7 @@ use DataWarehouse\Access\MetricExplorer;
 use Exception;
 
 #[Route('/efficiency')]
-class EfficiencyControllerProvider extends BaseControllerProvider
+class EfficiencyControllerProvider extends BaseController
 {
     /**
      * Retrieve efficiency analytics
