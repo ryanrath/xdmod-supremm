@@ -1,6 +1,6 @@
 <?php
 
-namespace CCR\Controllers;
+namespace CCR\Controller;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

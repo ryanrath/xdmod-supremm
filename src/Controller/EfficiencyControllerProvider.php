@@ -1,6 +1,6 @@
 <?php
 
-namespace CCR\Controllers;
+namespace CCR\Controller;
 
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace CCR\Controllers;
+namespace CCR\Controller;
 
 use \Symfony\Component\HttpFoundation\Request;
 use \Symfony\Component\HttpFoundation\Response;
