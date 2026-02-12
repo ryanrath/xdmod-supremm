@@ -26,6 +26,6 @@ class StatsController extends BaseController
             )
         ];
 
-        return $this->render('twig/stats.html.twig', $params);
+        return $this->render('twig/supremm/stats.html.twig', $params);
     }
 }
