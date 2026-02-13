@@ -16,6 +16,7 @@ use DataWarehouse\Access\MetricExplorer;
 use Exception;
 
 #[Route('/efficiency')]
+#[Route('{prefix}/efficiency', requirements: ['prefix' => '.*'])]
 class EfficiencyController extends BaseController
 {
     /**
