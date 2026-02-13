@@ -15,8 +15,6 @@ use DataWarehouse\Access\MetricExplorer;
 
 use Exception;
 
-#[Route('/efficiency')]
-#[Route('{prefix}/efficiency', requirements: ['prefix' => '.*'])]
 class EfficiencyController extends BaseController
 {
     /**
@@ -37,7 +35,8 @@ class EfficiencyController extends BaseController
      *
      * @return Response
      */
-    #[Route('/analytics', methods: ['GET'])]
+    #[Route('/efficiency/analytics', methods: ['GET'])]
+    #[Route('{prefix}efficiency/analytics', requirements: ['prefix' => '.*'], methods: ["GET"])]
     public function getAnalytics(): Response
     {
         $efficiencyAnalytics = \Configuration\XdmodConfiguration::assocArrayFactory(
@@ -92,6 +91,7 @@ class EfficiencyController extends BaseController
      * @return Response
      */
     #[Route('/histogram/{dimension}', methods: ['GET'])]
+    #[Route('{prefix}efficiency/histogram/{dimension}', requirements: ['prefix' => '.*'], methods: ["GET"])]
     public function getHistogramData(Request $request, $dimension)
     {
         $user = $this->getUserFromRequest($request);
@@ -256,7 +256,8 @@ class EfficiencyController extends BaseController
      * @param Request $request
      * @return Response
      */
-    #[Route('/groupedData', methods: ['GET'])]
+    #[Route('/efficiency/groupedData', methods: ['GET'])]
+    #[Route('{prefix}efficiency/groupedData', requirements: ['prefix' => '.*'], methods: ["GET"])]
     public function getMultiStatisticData(Request $request): Response
     {
         $user = $this->authorize($request);
