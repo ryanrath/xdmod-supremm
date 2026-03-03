@@ -94,7 +94,7 @@ class EfficiencyController extends BaseController
     #[Route('{prefix}efficiency/histogram/{dimension}', requirements: ['prefix' => '.*'], methods: ["GET"])]
     public function getHistogramData(Request $request, $dimension)
     {
-        $user = $this->getUserFromRequest($request);
+        $user = $this->authorize($request);
 
         $params = $request->query->all();
 

@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use XDUser;
 use \CCR\DB;
 
-#[Route('/supremm_dataflow')]
+
 class SupremmDataflowControllerProvider extends BaseController
 {
     /**
@@ -21,7 +21,7 @@ class SupremmDataflowControllerProvider extends BaseController
      * @param Request $request
      * @return Respnse
      */
-    #[Route('/resources', methods: ['GET'])]
+    #[Route('{prefix}supremm_dataflow/resources', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getResources(Request $request): Response
     {
         $action = __FUNCTION__;
@@ -51,7 +51,7 @@ class SupremmDataflowControllerProvider extends BaseController
      * @param Request $request
      * @return Response
      */
-    #[Route('/dbstats', methods: ['GET'])]
+    #[Route('{prefix}supremm_dataflow/dbstats', methods: ['GET'])]
     public function getDbstats(Request $request)
     {
         $resourceid = $this->getIntParam($request, 'resource_id');
@@ -81,7 +81,7 @@ class SupremmDataflowControllerProvider extends BaseController
      * @param Request $request
      * @return Response
      */
-    #[Route('/quality', methods: ['GET'])]
+    #[Route('{prefix}supremm_dataflow/quality', methods: ['GET'])]
     public function getQuality(Request $request, Application $app)
     {
         $this->authorize($request, array('mgr'));
